@@ -1,0 +1,119 @@
+* { box-sizing: border-box }
+
+body {
+  margin: 0;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.main-container {
+  width: 399px;
+  height: 332px;
+  //border: 1px solid black;
+  //background: -moz-linear-gradient(left, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+  //background: -webkit-linear-gradient(left, rgba(0,0,0,0.35) 0%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  //background: linear-gradient(to right, rgba(0,0,0,0.35) 0%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
+}
+
+.clock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px 15px;
+  margin-top: -10px;
+
+  &--additional {
+    display: flex;
+    flex-direction: column;
+    line-height: 25px;
+    float: left;
+    text-align: right;
+    width: 50%;
+    vertical-align: middle;
+    padding-top: 15px;
+    z-index: 10;
+  }
+
+  &--time {
+    float: left;
+    font-size: 76px;
+    width: 50%;
+  }
+  &--date {
+    font-size: 24px;
+  }
+  &--holiday {
+    margin-top: 9px;
+    line-height: 11px;
+  }
+}
+
+.temperature {
+  padding-left: 15px;
+  line-height: 22px;
+  float: left;
+  &--temp {
+    font-weight: bold;
+    font-size: 22px;
+  }
+  &--time {
+    font-size: 16px;
+  }
+}
+
+.horizontal-separator {
+  width: 100%;
+  height: 1px;
+  background: #000;
+  display: inline-block;
+}
+
+.meteo {
+  &--radar {
+    float: left;
+    padding-left: 5px;
+  }
+  &--meteogram {
+    width: 100%;
+    float: left;
+    background-repeat: no-repeat;
+    height: 88px;
+    display: inline-block;
+    background-size: cover;
+    background-position-y: -95px;
+    margin-top: -30px;
+  }
+  &--rain {
+    width: 100%;
+    float: left;
+    background-repeat: no-repeat;
+    height: 30px;
+    display: inline-block;
+    background-size: cover;
+    background-position-y: -359px;
+    margin-top: -16px;
+  }
+  //img {
+  //  max-width: 100%;
+  //}
+}
+
+.camera {
+  width: 133px;
+  overflow: hidden;
+  height: 117px;
+  float: right;
+  margin-top: -25px;
+  &--image {
+    margin-left: -1461px;
+    margin-top: -35px;
+    f-webkit-filter: invert(100%);
+    -ms-filter: invert(100%);
+    -o-filter: invert(100%);
+    filter: invert(100%);
+  }
+}
