@@ -15,35 +15,49 @@ $date = (new \DateTime())->format('d.m.Y');
 $day = $dayLookup[(new \DateTime())->format('N')] ?? '';
 
 $client = new GuzzleHttp\Client();
-$responseHoliday = $client->get('https://api.abalin.net/get/today?country=cz');
-$bodyHoliday = $responseHoliday->getBody()->getContents();
+
 $holiday = '';
-if ($bodyHoliday) {
-    $holiday = json_decode($bodyHoliday, true)['data']['name_cz'] ?? '';
-}
-
-$utcHour = (new \DateTime())->setTimezone(new DateTimeZone('UTC'))->format('H');
-
-if ($utcHour > 0 && $utcHour <= 8) {
-    $meteogramHour = '00';
-} else if ($utcHour > 7 && $utcHour <= 14) {
-	$meteogramHour = '06';
-} else if ($utcHour > 13 && $utcHour <= 20) {
-	$meteogramHour = '12';
-} else {
-	$meteogramHour = '18';
-}
-
-$meteogramDate = (new \DateTime())->format('Ymd');
-$urlMeteogram = "http://portal.chmi.cz/files/portal/docs/meteo/ov/aladin/results/public/meteogramy/data/{$meteogramDate}{$meteogramHour}/809.png";
-
-$responseTemp = $client->get('http://192.168.2.35/tempova.php');
-$bodyTemp = $responseTemp->getBody()->getContents();
 $temperatureTemp = '';
 $temperatureTime = '';
-if ($bodyTemp) {
-    list ($temperatureTime, $temperatureTemp) = explode(':::', $bodyTemp);
+
+try {
+	$responseHoliday = $client->get('https://api.abalin.net/get/today?country=cz');
+	$bodyHoliday = $responseHoliday->getBody()->getContents();
+
+	$holiday = json_decode($bodyHoliday, true)['data']['name_cz'] ?? '';
+} catch (\Exception $ex) { }
+
+try {
+	$timestamp = time();
+	$responseMeteograms = $client->get("http://portal.chmi.cz/files/portal/docs/meteo/ov/aladin/results/public/meteogramy/data/mdirs.txt?{$timestamp}");
+	$bodyMeteograms = $responseMeteograms->getBody()->getContents();
+
+	$allMeteograms = explode('----', preg_replace('/\s+/', '----', $bodyMeteograms));
+	$meteogramFile = reset($allMeteograms);
+} catch (\Exception $ex) {
+	$utcHour = (new \DateTime())->setTimezone(new DateTimeZone('UTC'))->format('H');
+
+	if ($utcHour > 0 && $utcHour <= 6) {
+		$meteogramHour = '00';
+	} else if ($utcHour > 7 && $utcHour <= 12) {
+		$meteogramHour = '06';
+	} else if ($utcHour > 13 && $utcHour <= 18) {
+		$meteogramHour = '12';
+	} else {
+		$meteogramHour = '18';
+	}
+
+	$meteogramFile = (new \DateTime())->format('Ymd') . $meteogramHour;
 }
+
+$urlMeteogram = "http://portal.chmi.cz/files/portal/docs/meteo/ov/aladin/results/public/meteogramy/data/{$meteogramFile}/809.png";
+
+try {
+	$responseTemp = $client->get('http://192.168.2.35/tempova.php');
+	$bodyTemp = $responseTemp->getBody()->getContents();
+
+	list ($temperatureTime, $temperatureTemp) = explode(':::', $bodyTemp);
+} catch (\Exception $ex) { }
 
 ?>
 
@@ -54,7 +68,6 @@ if ($bodyTemp) {
 	<title>WidgetWW</title>
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-
 </head>
 <body>
     <div class="main-container">
